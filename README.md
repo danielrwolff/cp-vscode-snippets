@@ -10,7 +10,7 @@ A tool to easily create VSCode snippets for competitive programming. This tool a
 
 ## How to create your own snippets
 
-1. Create a new file in the `./templates` folder. Insert your desired snippet into that file exactly how you the snippet to appear when you use it in VSCode. An example for a modular inverse implementation can be seen below:
+1. Create a new file in the `./templates` folder. Insert your desired snippet into that file exactly how you want the snippet to appear when you use it in VSCode. An example for a modular inverse implementation can be seen below:
 
 ```cpp
 int inverse(int a) {
