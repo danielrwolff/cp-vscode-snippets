@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<schema>
+  <template name="inv_modulo" prefix="cpp" display-name="Inverse Modulo">
+    Returns the modular inverse of a given value using the extended euclidean algorithm.
+  </template>
+  <dependencies>
+    <dependency template-name="ext_euclid" />
+  </dependencies>
+</schema>

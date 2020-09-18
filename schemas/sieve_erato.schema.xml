@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<schema>
+  <template name="sieve_erato" prefix="cpp" display-name="Sieve of Eratosthenes">
+    Find all prime numbers less than or equal to N.
+  </template>
+</schema>

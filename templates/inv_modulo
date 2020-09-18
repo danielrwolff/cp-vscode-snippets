@@ -1,0 +1,7 @@
+int inverse(int a) {
+  int x, y;
+  int gcd = extended_euclid(a, MOD, x, y);
+  // if gcd != 1 then no solution (might not be relevant)
+  // if you need x to always be positive, x = (x % MOD + MOD) % MOD
+  return x;
+}
