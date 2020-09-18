@@ -1,3 +1,5 @@
+from __future__ import print_function
+
 import sys
 import xml.etree.ElementTree as ET
 import json
@@ -10,7 +12,7 @@ OUTPUT_DIR = "/mnt/c/Users/Daniel/AppData/Roaming/Code/User/snippets"
 OUTPUT_FILENAME = "cp.code-snippets"
 
 def warn(msg, *args) :
-  print >> sys.stderr, msg % args
+  print(msg % args, sys.stderr)
 
 def fail(msg, *args) :
   warn(msg, *args)
