@@ -38,5 +38,5 @@ int inverse(int a) {
 
 ## TO-DO
 
-- [] Use an environment variable or input parameter for the VSCode snippet directory rather than editing the python script.
-- [] Include more snippets.
+- [ ] Use an environment variable or input parameter for the VSCode snippet directory rather than editing the python script.
+- [ ] Include more snippets.
