@@ -1,0 +1,44 @@
+// Combinatorics Base namescape - not recommended for direct use.
+namespace CombBase {
+int computed_combs = 0;
+vector<int> facts, inv_facts, rev;
+
+inline void compute_combs(int _n) {
+  if (computed_combs >= _n) return;
+  facts.resize(_n);
+  inv_facts.resize(_n);
+  rev.resize(_n);
+  rev[1] = 1;
+  for (int i = max((int)2, computed_combs); i < _n; i++)
+    rev[i] = MOD - rev[MOD % i] * (MOD / i) % MOD;
+  facts[0] = 1, inv_facts[0] = 1;
+  for (int i = max((int)1, computed_combs); i < _n; i++)
+    facts[i] = facts[i - 1] * i % MOD, inv_facts[i] = inv_facts[i - 1] * rev[i] % MOD;
+  computed_combs = _n;
+}
+}  // namespace CombBase
+
+// Factorial of the given number X.
+int factorial(int x) {
+  if (CombBase::computed_combs <= x) CombBase::compute_combs(x + 1);
+  return CombBase::facts[x];
+}
+
+// Inverse factorial of the given number X.
+int inverse_factorial(int x) {
+  if (CombBase::computed_combs <= x) CombBase::compute_combs(x + 1);
+  return CombBase::inv_facts[x];
+}
+
+// Choose K elements from a set of N, no replacement.
+int nchoosek(int n, int k) {
+  if (k < 0 || k > n) return 0;
+  if (CombBase::computed_combs <= n) CombBase::compute_combs(n + 1);
+  return CombBase::facts[n] * CombBase::inv_facts[n - k] % MOD * CombBase::inv_facts[k] % MOD;
+}
+
+// Choose K elements from a set of N, with replacement.
+int nreplacek(int n, int k) {
+  if (k < 0) return 0;
+  return nchoosek(n + k - 1, k);
+}
