@@ -8,11 +8,6 @@ import yaml
 from os import listdir
 from os.path import isfile, join, isdir
 
-TEMPLATES_DIR = "templates"
-SCHEMAS_DIR = "schemas"
-OUTPUT_DIR = "/mnt/c/Users/Daniel/AppData/Roaming/Code/User/snippets"
-OUTPUT_FILENAME = "cp.code-snippets"
-
 def warn(msg, *args) :
   print(msg % args, sys.stderr)
 
@@ -112,14 +107,25 @@ def resolve_dependencies(schemas, schema) :
 
 
 if __name__ == "__main__" :
-  templates = get_files_in_dir(TEMPLATES_DIR)
-  raw_schemas = get_files_in_dir(SCHEMAS_DIR)
+  parser = argparse.ArgumentParser()
+  parser.add_argument('--templates_dir', '-td', type=str, default='templates', help='path to the templates directory')
+  parser.add_argument('--schemas_dir', '-sd', type=str, default='schemas', help='path to the schemas directory')
+  parser.add_argument('--config_file', '-cf', type=str, help='path to the configuration file (this overrides schemas_dir)')
+  parser.add_argument('--output_dir', '-od', type=str, default='/mnt/c/Users/Daniel/AppData/Roaming/Code/User/snippets', help='path to the output directory')
+  parser.add_argument('--output_filename', '-of', type=str, default='cp.code-snippets', help='name of the output snippets file')
+  args = parser.parse_args()
+
+  templates = get_files_in_dir(args.templates_dir)
   schemas = {}
   out_json = {}
 
-  for schema_name, data in raw_schemas.items() :
-    schema = parse_schema(schema_name, data)
-    schemas[schema["name"]] = schema
+  if args.config_file:
+    schemas = parse_config(args.config_file)
+  else:
+    raw_schemas = get_files_in_dir(args.schemas_dir)
+    for schema_name, data in raw_schemas.items() :
+      schema = parse_schema(schema_name, data)
+      schemas[schema["name"]] = schema
 
   for template_name, template_data in templates.items() :
     schema = schemas[template_name]
@@ -134,5 +140,5 @@ if __name__ == "__main__" :
       "description": schema["description"]
     }
 
-  with open(join(OUTPUT_DIR, OUTPUT_FILENAME), 'w') as output :
+  with open(join(args.output_dir, args.output_filename), 'w') as output :
     output.write(json.dumps(out_json))
