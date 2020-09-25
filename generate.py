@@ -1,8 +1,10 @@
 from __future__ import print_function
 
+import argparse
 import sys
 import xml.etree.ElementTree as ET
 import json
+import yaml
 from os import listdir
 from os.path import isfile, join, isdir
 
@@ -27,6 +29,38 @@ def get_files_in_dir(directory) :
       filedata[filename] = f.read()
 
   return filedata
+
+def parse_config(filename):
+  with open(filename, 'r') as stream:
+    config = yaml.safe_load(stream)
+
+  schemas = {}
+
+  if 'Schemas' not in config: fail("Configuration file is missing top-level key 'Schemas'.")
+  for schema in config['Schemas']:
+    if 'Name' not in schema: fail("Schema '%s' does not specify a template name.", schema)
+    template_name = schema.get('Name')
+    template_disp = schema.get('Display', template_name)
+    template_desc = schema.get('Description', template_name)
+    template_pref = schema.get('Prefix', 'cpp')
+    template_deps = set(schema.get('Dependencies', []))
+    schemas[template_name] = {
+      "name": template_name,
+      "display-name": template_disp,
+      "description": template_desc,
+      "prefix": template_pref,
+      "dependencies": template_deps,
+      "raw_schema": schema
+    }
+
+  for template_name, schema in schemas.items():
+    valid_dependencies = []
+    for dependency_name in schema['dependencies']:
+      if dependency_name in schemas.keys(): valid_dependencies.append(dependency_name)
+      else: warn("Schema '%s' depends on a template that could not be found: '%s'", name, dependency_name)
+    schema['dependencies'] = valid_dependencies
+  return schemas
+
 
 def parse_schema(name, data) :
   schema = ET.fromstring(data)
