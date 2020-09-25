@@ -30,9 +30,7 @@ def parse_config(filename):
     config = yaml.safe_load(stream)
 
   schemas = {}
-
-  if 'Schemas' not in config: fail("Configuration file is missing top-level key 'Schemas'.")
-  for schema in config['Schemas']:
+  for schema in config:
     if 'Name' not in schema: fail("Schema '%s' does not specify a template name.", schema)
     template_name = schema.get('Name')
     template_disp = schema.get('Display', template_name)
@@ -52,7 +50,7 @@ def parse_config(filename):
     valid_dependencies = []
     for dependency_name in schema['dependencies']:
       if dependency_name in schemas.keys(): valid_dependencies.append(dependency_name)
-      else: warn("Schema '%s' depends on a template that could not be found: '%s'", name, dependency_name)
+      else: warn("Schema '%s' depends on a template that could not be found: '%s'.", template_name, dependency_name)
     schema['dependencies'] = valid_dependencies
   return schemas
 
