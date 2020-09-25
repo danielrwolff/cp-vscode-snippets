@@ -23,8 +23,8 @@ def get_files_in_dir(directory) :
   filedata = {}
 
   for filename in filenames :
-    f = open(join(directory, filename), "r")
-    filedata[filename] = f.read()
+    with open(join(directory, filename), "r") as f:
+      filedata[filename] = f.read()
 
   return filedata
 
