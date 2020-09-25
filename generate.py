@@ -9,7 +9,7 @@ from os import listdir
 from os.path import isfile, join, isdir
 
 def warn(msg, *args) :
-  print(msg % args, sys.stderr)
+  print(msg % args, file=sys.stderr)
 
 def fail(msg, *args) :
   warn(msg, *args)
