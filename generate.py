@@ -1,18 +1,15 @@
 from __future__ import print_function
 
+import argparse
 import sys
 import xml.etree.ElementTree as ET
 import json
+import yaml
 from os import listdir
 from os.path import isfile, join, isdir
 
-TEMPLATES_DIR = "templates"
-SCHEMAS_DIR = "schemas"
-OUTPUT_DIR = "/mnt/c/Users/Daniel/AppData/Roaming/Code/User/snippets"
-OUTPUT_FILENAME = "cp.code-snippets"
-
 def warn(msg, *args) :
-  print(msg % args, sys.stderr)
+  print(msg % args, file=sys.stderr)
 
 def fail(msg, *args) :
   warn(msg, *args)
@@ -23,10 +20,40 @@ def get_files_in_dir(directory) :
   filedata = {}
 
   for filename in filenames :
-    f = open(join(directory, filename), "r")
-    filedata[filename] = f.read()
+    with open(join(directory, filename), "r") as f:
+      filedata[filename] = f.read()
 
   return filedata
+
+def parse_config(filename):
+  with open(filename, 'r') as stream:
+    config = yaml.safe_load(stream)
+
+  schemas = {}
+  for schema in config:
+    if 'Name' not in schema: fail("Schema '%s' does not specify a template name.", schema)
+    template_name = schema.get('Name')
+    template_disp = schema.get('Display', template_name)
+    template_desc = schema.get('Description', template_name)
+    template_pref = schema.get('Prefix', 'cpp')
+    template_deps = set(schema.get('Dependencies', []))
+    schemas[template_name] = {
+      "name": template_name,
+      "display-name": template_disp,
+      "description": template_desc,
+      "prefix": template_pref,
+      "dependencies": template_deps,
+      "raw_schema": schema
+    }
+
+  for template_name, schema in schemas.items():
+    valid_dependencies = []
+    for dependency_name in schema['dependencies']:
+      if dependency_name in schemas.keys(): valid_dependencies.append(dependency_name)
+      else: warn("Schema '%s' depends on a template that could not be found: '%s'.", template_name, dependency_name)
+    schema['dependencies'] = valid_dependencies
+  return schemas
+
 
 def parse_schema(name, data) :
   schema = ET.fromstring(data)
@@ -78,14 +105,25 @@ def resolve_dependencies(schemas, schema) :
 
 
 if __name__ == "__main__" :
-  templates = get_files_in_dir(TEMPLATES_DIR)
-  raw_schemas = get_files_in_dir(SCHEMAS_DIR)
+  parser = argparse.ArgumentParser()
+  parser.add_argument('--templates_dir', '-td', type=str, default='templates', help='path to the templates directory')
+  parser.add_argument('--schemas_dir', '-sd', type=str, default='schemas', help='path to the schemas directory')
+  parser.add_argument('--config_file', '-cf', type=str, help='path to the configuration file (this overrides schemas_dir)')
+  parser.add_argument('--output_dir', '-od', type=str, default='/mnt/c/Users/Daniel/AppData/Roaming/Code/User/snippets', help='path to the output directory')
+  parser.add_argument('--output_filename', '-of', type=str, default='cp.code-snippets', help='name of the output snippets file')
+  args = parser.parse_args()
+
+  templates = get_files_in_dir(args.templates_dir)
   schemas = {}
   out_json = {}
 
-  for schema_name, data in raw_schemas.items() :
-    schema = parse_schema(schema_name, data)
-    schemas[schema["name"]] = schema
+  if args.config_file:
+    schemas = parse_config(args.config_file)
+  else:
+    raw_schemas = get_files_in_dir(args.schemas_dir)
+    for schema_name, data in raw_schemas.items() :
+      schema = parse_schema(schema_name, data)
+      schemas[schema["name"]] = schema
 
   for template_name, template_data in templates.items() :
     schema = schemas[template_name]
@@ -100,5 +138,5 @@ if __name__ == "__main__" :
       "description": schema["description"]
     }
 
-  with open(join(OUTPUT_DIR, OUTPUT_FILENAME), 'w') as output :
+  with open(join(args.output_dir, args.output_filename), 'w') as output :
     output.write(json.dumps(out_json))
