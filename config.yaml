@@ -1,3 +1,8 @@
+- Name: combinatorics
+  Prefix: cpp
+  Display: Combinatorics
+  Description: Suite of efficient combinatoric utility functions.
+
 - Name: bin_exp
   Prefix: cpp
   Display: Binary Exponentiation with Modulo
