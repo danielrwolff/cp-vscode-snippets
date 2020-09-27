@@ -1,6 +1,0 @@
-<?xml version="1.0"?>
-<schema>
-  <template name="bin_exp" prefix="cpp" display-name="Binary Exponentiation with Modulo">
-    Effective computation of large exponents module a number.
-  </template>
-</schema>

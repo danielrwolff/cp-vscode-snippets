@@ -1,6 +1,0 @@
-<?xml version="1.0"?>
-<schema>
-  <template name="ext_euclid_iter" prefix="cpp" display-name="Extended Euclidean Algorithm (Iterative)">
-    Calculates the GCD of A and B while also determining the coefficients for each.
-  </template>
-</schema>

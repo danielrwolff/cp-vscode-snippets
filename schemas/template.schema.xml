@@ -1,6 +1,0 @@
-<?xml version="1.0"?>
-<schema>
-  <template name="template" prefix="cpp" display-name="C++ Template">
-    A general C++ solution template.
-  </template>
-</schema>

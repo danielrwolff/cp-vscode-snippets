@@ -1,6 +1,0 @@
-<?xml version="1.0"?>
-<schema>
-  <template name="combinatorics" prefix="cpp" display-name="Combinatorics">
-    Suite of efficient combinatoric utility functions.
-  </template>
-</schema>
