@@ -43,8 +43,7 @@ struct UnionFind {
   }
 
   /**
-   * Connects two sites in the UnionFind instance.  The ordering of these sites
-   * does not matter.
+   * Connects two sites.  The ordering of these sites does not matter.
    * 
    * @param site1 The first site.
    * @param site2 The second site.
