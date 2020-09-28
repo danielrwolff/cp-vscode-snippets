@@ -1,0 +1,114 @@
+#include <algorithm>
+#include <numeric>
+
+struct UnionFind {
+  /**
+   * The parent site of each site.
+   */
+  int* id;
+
+  /**
+   * The size of the component rooted at each site.
+   */
+  int* sz;
+
+  /**
+   * The total number of sites.
+   */
+  int sites;
+
+  /**
+   * The number of active components.
+   */
+  int comps;
+
+  /**
+   * Constructs a union-find instance with the given capacity.
+   * 
+   * @param capacity The initial number of contiguous components.
+   */
+  UnionFind(const int capacity) : sites(capacity), comps(capacity) {
+    id = new int[capacity];
+    sz = new int[capacity];
+    std::iota(id, id + capacity, 0);
+    std::fill(sz, sz + capacity, 1);
+  }
+
+  /**
+   * Destructs the UnionFind instance.
+   */
+  ~UnionFind() {
+    delete[] id;
+    delete[] sz;
+  }
+
+  /**
+   * Connects two sites in the UnionFind instance.  The ordering of these sites
+   * does not matter.
+   * 
+   * @param site1 The first site.
+   * @param site2 The second site.
+   */
+  void merge(const int site1, const int site2) {
+    int root1 = find(site1);
+    int root2 = find(site2);
+    if (root1 == root2) return;
+
+    if (sz[root1] < sz[root2]) {
+      id[root1] = root2;
+      sz[root2] += sz[root1];
+    } else {
+      id[root2] = root1;
+      sz[root1] += sz[root2];
+    }
+    --comps;
+  }
+
+  /**
+   * Returns the component identifier for the given site.
+   * 
+   * @param site The site.
+   * 
+   * @return The component identifier of the site.
+   */
+  int find(const int site) {
+    int root = site == id[site] ? site : find(id[site]);
+    id[site] = root;
+    return root;
+  }
+
+  /**
+   * Returns the component identifier for the given site.
+   * 
+   * @param site The site.
+   * 
+   * @return The component identifier of the site.
+   */
+  int find(const int site) const {
+    return site == id[site] ? site : find(id[site]);
+  }
+
+  /**
+   * Returns true if the two sites belong to the same component.
+   * 
+   * @param site1 The first site.
+   * @param site2 The second site.
+   * 
+   * @return True if the two sites belong to the same component.
+   */
+  bool connected(const int site1, const int site2) {
+    return find(site1) == find(site2);
+  }
+
+  /**
+   * Returns true if the two sites belong to the same component.
+   * 
+   * @param site1 The first site.
+   * @param site2 The second site.
+   * 
+   * @return True if the two sites belong to the same component.
+   */
+  bool connected(const int site1, const int site2) const {
+    return find(site1) == find(site2);
+  }
+};
