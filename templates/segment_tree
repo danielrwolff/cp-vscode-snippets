@@ -1,0 +1,93 @@
+struct SegmentTree {
+  static const int MAXN = 10;
+  int N, zero = 0;
+  function<int(int, int)> combine;
+  int t[MAXN * 2];
+
+  static int combine_sum(int a, int b) { return a + b; };
+  static int combine_min(int a, int b) { return std::min(a, b); };
+  static int combine_max(int a, int b) { return std::max(a, b); };
+
+  enum CombineBy { sum,
+                   min,
+                   max,
+                   other };
+
+  void set_combine_type(CombineBy type) {
+    switch (type) {
+      case sum:
+        set_combine(combine_sum, 0);
+        break;
+      case min:
+        set_combine(combine_min, INF);
+        break;
+      case max:
+        set_combine(combine_max, 0);
+        break;
+    }
+  };
+
+  void set_combine(function<int(int, int)> combine_func, int zero_value) {
+    combine = combine_func;
+    zero = zero_value;
+    fill(t, t + N, zero);
+    build();
+  }
+
+  SegmentTree(const int size, CombineBy type = sum) : N(size) {
+    set_combine_type(type);
+  }
+
+  SegmentTree(const vector<int> array, CombineBy type = sum) : N(array.size()) {
+    set_combine_type(type);
+    for (int i = N; i < 2 * N; i++) t[i] = array[i - N];
+    if (type != other) build();
+  }
+
+  // Build the tree - O(N).
+  void build() {
+    for (int i = N - 1; i > 0; --i)
+      t[i] = combine(t[i << 1], t[i << 1 | 1]);
+  }
+
+  // Set position in the tree - O(1). Must build after doing this.
+  void set(int index, int value) {
+    t[index] = value;
+  }
+
+  // Get position in the tree - O(1).
+  void get(int index, int value) {
+    t[index] = value;
+  }
+
+  // Set position in the tree, adjust tree - O(log(N)).
+  void modify(int p, int value) {
+    for (t[p += N] = value; p > 1; p >>= 1)
+      t[p >> 1] = combine(t[p], t[p ^ 1]);
+  }
+
+  // Get result on interval [l, r) - O(log(N)).
+  int query(int l, int r) {
+    int resl, resr;
+    for (l += N, r += N; l < r; l >>= 1, r >>= 1) {
+      if (l & 1) resl = combine(resl, t[l++]);
+      if (r & 1) resr = combine(t[--r], resr);
+    }
+    return combine(resl, resr);
+  }
+
+  // Force all values to leaf nodes - O(N).
+  void push() {
+    for (int i = 1; i < N; ++i) {
+      t[i << 1] = combine(t[i << 1], t[i]);
+      t[i << 1 | 1] = combine(t[i << 1 | 1], t[i]);
+      t[i] = zero;
+    }
+  }
+
+  // Output the tree to standard out. Should be used for debugging only!
+  void display() {
+    for (int i = 0; i < 2 * N; i++) cout << t[i] << " ";
+    cout << endl;
+  }
+};

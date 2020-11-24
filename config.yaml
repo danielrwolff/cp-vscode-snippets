@@ -24,6 +24,11 @@
   Description: Returns the modular inverse of a given value using the extended euclidean algorithm.
   Dependencies: [ext_euclid]
 
+- Name: segment_tree
+  Prefix: cpp
+  Display: Segment Tree
+  Description: Construct a segment tree by sum, min, max, or your own combine method.
+
 - Name: sieve_erato
   Prefix: cpp
   Display: Sieve of Eratosthenes
