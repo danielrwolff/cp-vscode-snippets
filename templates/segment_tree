@@ -1,47 +1,24 @@
 template <typename T>
 struct SegmentTree {
-  enum CombineBy { sum,
-                   min,
-                   max,
-                   other };
-
   int N;
   T zero;
   T* t;
-  CombineBy type;
   function<T(T, T)> combine;
 
   static T combine_sum(T a, T b) { return a + b; };
   static T combine_min(T a, T b) { return std::min(a, b); };
   static T combine_max(T a, T b) { return std::max(a, b); };
 
-  // Set how the Segment Tree will behave when accumulating elements. This action
-  // will build the Segment Tree to match the defined behavior.
-  void set_behavior(function<T(T, T)> combine_func, T zero_value) {
-    combine = combine_func;
-    zero = zero_value;
-    fill(t, t + N, zero);
-    build();
-  }
-
-  void _init() {
+  SegmentTree(const int size, function<T(T, T)> combine_func = combine_sum, T zero = 0) : N(size), combine(combine_func), zero(zero) {
     t = new T[2 * N];
-    if (type == sum)
-      set_behavior(combine_sum, zero);
-    else if (type == min)
-      set_behavior(combine_min, zero);
-    else if (type == max)
-      set_behavior(combine_max, zero);
+    fill(t, t + 2 * N, zero);
   }
 
-  SegmentTree(const int size, CombineBy type, T zero) : N(size), type(type), zero(zero) {
-    _init();
-  }
-
-  SegmentTree(const vector<T> array, CombineBy type, T zero) : N(array.size()), type(type), zero(zero) {
-    _init();
+  SegmentTree(const vector<T> array, function<T(T, T)> combine_func = combine_sum, T zero = 0) : N(array.size()), combine(combine_func), zero(zero) {
+    t = new T[2 * N];
+    fill(t, t + N, zero);
     for (int i = N; i < 2 * N; i++) t[i] = array[i - N];
-    if (type != other) build();
+    build();
   }
 
   // Build the tree - O(N).
