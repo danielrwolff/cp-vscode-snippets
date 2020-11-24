@@ -73,9 +73,9 @@ def resolve_dependencies(schemas, schema) :
 
 
 if __name__ == "__main__" :
-  parser = argparse.ArgumentParser()
+  parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
   parser.add_argument('--templates_dir', '-td', type=str, default='templates', help='path to the templates directory')
-  parser.add_argument('--config_file', '-cf', type=str, default='config.yaml', help='path to the configuration file (this overrides schemas_dir)')
+  parser.add_argument('--config_file', '-cf', type=str, default='config.yaml', help='path to the YAML configuration file')
   parser.add_argument('--output_dir', '-od', type=str, default='/mnt/c/Users/Daniel/AppData/Roaming/Code/User/snippets', help='path to the output directory')
   parser.add_argument('--output_filename', '-of', type=str, default='cp.code-snippets', help='name of the output snippets file')
   args = parser.parse_args()
