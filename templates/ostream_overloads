@@ -1,0 +1,116 @@
+// Output stream overloads.
+template <typename T>
+std::ostream& operator<<(std::ostream& out, const std::vector<T>& v) {
+  if (v.size() == 0) {
+    return out << "[]";
+  }
+
+  out << '[' << v[0];
+  for (int i = 1; i < v.size(); ++i) {
+    out << ' ' << v[i];
+  }
+  return out << ']';
+}
+
+template <typename T>
+std::ostream& operator<<(std::ostream& out, const std::vector<std::vector<T>>& m) {
+  if (m.size() == 0) {
+    return out << "[]";
+  }
+
+  for (const auto& row : m) {
+    out << row << endl;
+  }
+  return out;
+}
+
+template <typename T>
+std::ostream& operator<<(std::ostream& out, const std::deque<T>& d) {
+  if (d.size() == 0) {
+    return out << "[]";
+  }
+
+  out << '[' << d[0];
+  for (int i = 1; i < d.size(); ++i) {
+    out << ' ' << d[i];
+  }
+  return out << ']';
+}
+
+template <typename T>
+std::ostream& operator<<(std::ostream& out, const std::set<T>& s) {
+  if (s.size() == 0) {
+    return out << "{}";
+  }
+
+  out << '{' << *s.begin();
+  for (auto it = ++s.begin(); it != s.end(); ++it) {
+    out << ' ' << *it;
+  }
+  return out << '}';
+}
+
+template <typename T>
+std::ostream& operator<<(std::ostream& out, const std::unordered_set<T>& s) {
+  if (s.size() == 0) {
+    return out << "{}";
+  }
+
+  std::vector<T> v(s.begin(), s.end());
+  sort(v.begin(), v.end());
+
+  out << '{' << v[0];
+  for (int i = 1; i < v.size(); ++i) {
+    out << ' ' << v[i];
+  }
+  return out << '}';
+}
+
+template <typename T>
+std::ostream& operator<<(std::ostream& out, const std::multiset<T>& s) {
+  return out << std::vector<T>(s.begin(), s.end());
+}
+
+template <typename K, typename V>
+std::ostream& operator<<(std::ostream& out, const std::map<K, V>& m) {
+  if (m.size() == 0) {
+    return out << "{}";
+  }
+
+  std::vector<K> keys;
+  for (const auto& p : m) {
+    keys.push_back(p.first);
+  }
+
+  out << "{" << keys[0] << ": " << m.at(keys[0]);
+  for (int i = 1; i < keys.size(); ++i) {
+    const auto& key = keys[i];
+    out << ", " << key << ": " << m.at(key);
+  }
+  return out << '}';
+}
+
+template <typename K, typename V>
+std::ostream& operator<<(std::ostream& out, const std::unordered_map<K, V>& m) {
+  if (m.size() == 0) {
+    return out << "{}";
+  }
+
+  std::vector<K> keys;
+  for (const auto& p : m) {
+    keys.push_back(p.first);
+  }
+  sort(keys.begin(), keys.end());
+
+  out << "{" << keys[0] << ": " << m.at(keys[0]);
+  for (int i = 1; i < keys.size(); ++i) {
+    const auto& key = keys[i];
+    out << ", " << key << ": " << m.at(key);
+  }
+  return out << '}';
+}
+
+template <typename F, typename S>
+std::ostream& operator<<(std::ostream& out, const std::pair<F, S>& p) {
+  return out << '(' << p.first << ", " << p.second << ')';
+}

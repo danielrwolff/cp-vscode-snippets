@@ -24,6 +24,11 @@
   Description: Returns the modular inverse of a given value using the extended euclidean algorithm.
   Dependencies: [ext_euclid]
 
+- Name: ostream_overloads
+  Prefix: cpp
+  Display: Output Stream Overloads
+  Description: Set of output stream overloads for common STL containers.
+  
 - Name: segment_tree
   Prefix: cpp
   Display: Segment Tree
@@ -38,3 +43,8 @@
   Prefix: cpp
   Display: C++ Template
   Description: A general C++ solution template.
+
+- Name: union_find
+  Prefix: cpp
+  Display: Union-Find
+  Description: Union-find implementation with path compression.
