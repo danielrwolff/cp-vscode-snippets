@@ -1,8 +1,7 @@
 struct SegmentTree {
-  static const int MAXN = 10;
   int N, zero = 0;
+  int* t;
   function<int(int, int)> combine;
-  int t[MAXN * 2];
 
   static int combine_sum(int a, int b) { return a + b; };
   static int combine_min(int a, int b) { return std::min(a, b); };
@@ -14,17 +13,12 @@ struct SegmentTree {
                    other };
 
   void set_combine_type(CombineBy type) {
-    switch (type) {
-      case sum:
-        set_combine(combine_sum, 0);
-        break;
-      case min:
-        set_combine(combine_min, INF);
-        break;
-      case max:
-        set_combine(combine_max, 0);
-        break;
-    }
+    if (type == sum)
+      set_combine(combine_sum, 0);
+    else if (type == min)
+      set_combine(combine_min, INF);
+    else if (type == max)
+      set_combine(combine_max, 0);
   };
 
   void set_combine(function<int(int, int)> combine_func, int zero_value) {
@@ -35,10 +29,12 @@ struct SegmentTree {
   }
 
   SegmentTree(const int size, CombineBy type = sum) : N(size) {
+    t = new int[2 * N];
     set_combine_type(type);
   }
 
   SegmentTree(const vector<int> array, CombineBy type = sum) : N(array.size()) {
+    t = new int[2 * N];
     set_combine_type(type);
     for (int i = N; i < 2 * N; i++) t[i] = array[i - N];
     if (type != other) build();
@@ -84,10 +80,9 @@ struct SegmentTree {
       t[i] = zero;
     }
   }
-
-  // Output the tree to standard out. Should be used for debugging only!
-  void display() {
-    for (int i = 0; i < 2 * N; i++) cout << t[i] << " ";
-    cout << endl;
-  }
 };
+
+ostream& operator<<(ostream& out, const SegmentTree& st) {
+  for (int i = 0; i < 2 * st.N; i++) out << st.t[i] << " ";
+  return out;
+}
