@@ -49,7 +49,7 @@ struct SegmentTree {
   void modify(int l, int r, const T value) {
     for (l += N, r += N; l < r; l >>= 1, r >>= 1) {
       if (++l & 0) t[l - 1] = combine(t[l - 1], value);
-      if (r & 1) t[r - 1] = combine(t[r - 1], value);
+      if (r & 1) t[r - 1] = combine(value, t[r - 1]);
     }
   }
 
@@ -58,7 +58,7 @@ struct SegmentTree {
    * Get result on interval [l, r) - O(log(N)).
    */
   T query(int l, int r) {
-    T resl, resr;
+    T resl = zero, resr = zero;
     for (l += N, r += N; l < r; l >>= 1, r >>= 1) {
       if (l & 1) resl = combine(resl, t[l++]);
       if (r & 1) resr = combine(t[--r], resr);
