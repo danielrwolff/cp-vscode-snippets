@@ -89,7 +89,11 @@ struct SegmentTree {
   }
 
   T operator[](int i) {
-    return t[i];
+    return t[i+N];
+  }
+
+  T set(int i, T val) {
+    return t[i+N] = val;
   }
 };
 
