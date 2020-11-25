@@ -3,7 +3,7 @@ struct SegmentTree {
   int N;
   T zero;
   T* t;
-  function<T(T, T)> combine;
+  std::function<T(T, T)> combine;
 
   static T combine_sum(T a, T b) { return a + b; };
   static T combine_min(T a, T b) { return std::min(a, b); };
@@ -21,6 +21,10 @@ struct SegmentTree {
     build();
   }
 
+  ~SegmentTree() {
+    delete[] t;
+  }
+
   // Build the tree - O(N).
   void build() {
     for (int i = N - 1; i > 0; --i)
@@ -28,23 +32,23 @@ struct SegmentTree {
   }
 
   // Set position in the tree - O(1). Must build after doing this.
-  void set(int index, T value) {
+  void set(const int index, const T& value) {
     t[index] = value;
   }
 
   // Get position in the tree - O(1).
-  T get(int index) {
+  T& get(int index) {
     return t[index];
   }
 
   // Set position in the tree, adjust tree - O(log(N)).
-  void modify(int p, T value) {
+  void modify(int p, const T& value) {
     for (t[p += N] = value; p > 1; p >>= 1)
       t[p >> 1] = combine(t[p], t[p ^ 1]);
   }
 
   // Get result on interval [l, r) - O(log(N)).
-  T query(int l, int r) {
+  T& query(int l, int r) {
     T resl, resr;
     for (l += N, r += N; l < r; l >>= 1, r >>= 1) {
       if (l & 1) resl = combine(resl, t[l++]);
@@ -60,6 +64,10 @@ struct SegmentTree {
       t[i << 1 | 1] = combine(t[i << 1 | 1], t[i]);
       t[i] = zero;
     }
+  }
+
+  T& operator[](int i) {
+    return get(i);
   }
 };
 
