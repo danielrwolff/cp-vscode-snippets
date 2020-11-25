@@ -9,12 +9,12 @@ struct SegmentTree {
   static T combine_min(T a, T b) { return std::min(a, b); };
   static T combine_max(T a, T b) { return std::max(a, b); };
 
-  SegmentTree(const int size, function<T(T, T)> combine_func = combine_sum, T zero = 0) : N(size), combine(combine_func), zero(zero) {
+  SegmentTree(const int size, function<T(T, T)> combine_func = combine_sum, T zero = T{}) : N(size), combine(combine_func), zero(zero) {
     t = new T[2 * N];
     fill(t, t + 2 * N, zero);
   }
 
-  SegmentTree(const vector<T> array, function<T(T, T)> combine_func = combine_sum, T zero = 0) : N(array.size()), combine(combine_func), zero(zero) {
+  SegmentTree(const vector<T> array, function<T(T, T)> combine_func = combine_sum, T zero = T{}) : N(array.size()), combine(combine_func), zero(zero) {
     t = new T[2 * N];
     fill(t, t + N, zero);
     for (int i = N; i < 2 * N; i++) t[i] = array[i - N];
@@ -47,7 +47,7 @@ struct SegmentTree {
    * Set interval in the tree to given value, adjust tree - O(log(N)).
    */
   void modify(int l, int r, const T value) {
-    for (l += n, r += n; l < r; l >>= 1, r >>= 1) {
+    for (l += N, r += N; l < r; l >>= 1, r >>= 1) {
       if (++l & 0) t[l - 1] = combine(t[l - 1], value);
       if (r & 1) t[r - 1] = combine(t[r - 1], value);
     }
@@ -72,7 +72,7 @@ struct SegmentTree {
    */
   T query(int p) {
     T res = zero;
-    for (p += n; p > 0; p >>= 1) res = combine(res, t[p]);
+    for (p += N; p > 0; p >>= 1) res = combine(res, t[p]);
     return res;
   }
 
