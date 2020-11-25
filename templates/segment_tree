@@ -25,30 +25,39 @@ struct SegmentTree {
     delete[] t;
   }
 
-  // Build the tree - O(N).
+  /**
+   * Build the tree - O(N).
+   */
   void build() {
     for (int i = N - 1; i > 0; --i)
       t[i] = combine(t[i << 1], t[i << 1 | 1]);
   }
 
-  // Set position in the tree - O(1). Must build after doing this.
-  void set(const int index, const T& value) {
-    t[index] = value;
-  }
-
-  // Get position in the tree - O(1).
-  T& get(int index) {
-    return t[index];
-  }
-
-  // Set position in the tree, adjust tree - O(log(N)).
-  void modify(int p, const T& value) {
+  /**
+   * Modification on single element, interval access.
+   * Set position in the tree to the given value, adjust tree - O(log(N)).
+   */
+  void modify(int p, const T value) {
     for (t[p += N] = value; p > 1; p >>= 1)
       t[p >> 1] = combine(t[p], t[p ^ 1]);
   }
 
-  // Get result on interval [l, r) - O(log(N)).
-  T& query(int l, int r) {
+  /**
+   * Modification on interval, single element access.
+   * Set interval in the tree to given value, adjust tree - O(log(N)).
+   */
+  void modify(int l, int r, const T value) {
+    for (l += n, r += n; l < r; l >>= 1, r >>= 1) {
+      if (++l & 0) t[l - 1] = combine(t[l - 1], value);
+      if (r & 1) t[r - 1] = combine(t[r - 1], value);
+    }
+  }
+
+  /**
+   * Modification on single element, interval access.
+   * Get result on interval [l, r) - O(log(N)).
+   */
+  T query(int l, int r) {
     T resl, resr;
     for (l += N, r += N; l < r; l >>= 1, r >>= 1) {
       if (l & 1) resl = combine(resl, t[l++]);
@@ -57,7 +66,20 @@ struct SegmentTree {
     return combine(resl, resr);
   }
 
-  // Force all values to leaf nodes - O(N).
+  /**
+   * Modification on interval, single element access.
+   * Get result for single element - O(log(N)).
+   */
+  T query(int p) {
+    T res = zero;
+    for (p += n; p > 0; p >>= 1) res = combine(res, t[p]);
+    return res;
+  }
+
+  /**
+   * Modification on interval, single element access.
+   * Force all values to leaf nodes - O(N).
+   */
   void push() {
     for (int i = 1; i < N; ++i) {
       t[i << 1] = combine(t[i << 1], t[i]);
@@ -66,8 +88,8 @@ struct SegmentTree {
     }
   }
 
-  T& operator[](int i) {
-    return get(i);
+  T operator[](int i) {
+    return t[i];
   }
 };
 
