@@ -1,0 +1,110 @@
+template <typename T>
+struct SegmentTree {
+  int N;
+  T zero;
+  T* t;
+  std::function<T(T, T)> combine;
+
+  static T combine_sum(T a, T b) { return a + b; };
+  static T combine_min(T a, T b) { return std::min(a, b); };
+  static T combine_max(T a, T b) { return std::max(a, b); };
+
+  SegmentTree(const int size, function<T(T, T)> combine_func = combine_sum, T zero = T{}) : N(size), combine(combine_func), zero(zero) {
+    t = new T[2 * N];
+    fill(t, t + 2 * N, zero);
+  }
+
+  SegmentTree(const vector<T> array, function<T(T, T)> combine_func = combine_sum, T zero = T{}) : N(array.size()), combine(combine_func), zero(zero) {
+    t = new T[2 * N];
+    fill(t, t + N, zero);
+    for (int i = N; i < 2 * N; i++) t[i] = array[i - N];
+    build();
+  }
+
+  ~SegmentTree() {
+    delete[] t;
+  }
+
+  /**
+   * Build the tree - O(N).
+   */
+  void build() {
+    for (int i = N - 1; i > 0; --i)
+      t[i] = combine(t[i << 1], t[i << 1 | 1]);
+  }
+
+  /**
+   * Modification on single element, interval access.
+   * Set position in the tree to the given value, adjust tree - O(log(N)).
+   */
+  void modify(int p, const T value) {
+    for (t[p += N] = value; p > 1; p >>= 1)
+      t[p >> 1] = combine(t[p], t[p ^ 1]);
+  }
+
+  /**
+   * Modification on interval, single element access.
+   * Set interval in the tree to given value, adjust tree - O(log(N)).
+   */
+  void modify(int l, int r, const T value) {
+    for (l += N, r += N; l < r; l >>= 1, r >>= 1) {
+      if (l & 1) {
+        t[l] += value;
+        l++;
+      }
+      if (r & 1) {
+        r--;
+        t[r] += value;
+      }
+    }
+  }
+
+  /**
+   * Modification on single element, interval access.
+   * Get result on interval [l, r) - O(log(N)).
+   */
+  T query(int l, int r) {
+    T resl = zero, resr = zero;
+    for (l += N, r += N; l < r; l >>= 1, r >>= 1) {
+      if (l & 1) resl = combine(resl, t[l++]);
+      if (r & 1) resr = combine(t[--r], resr);
+    }
+    return combine(resl, resr);
+  }
+
+  /**
+   * Modification on interval, single element access.
+   * Get result for single element - O(log(N)).
+   */
+  T query(int p) {
+    T res = zero;
+    for (p += N; p > 0; p >>= 1) res = combine(res, t[p]);
+    return res;
+  }
+
+  /**
+   * Modification on interval, single element access.
+   * Force all values to leaf nodes - O(N).
+   */
+  void push() {
+    for (int i = 1; i < N; ++i) {
+      t[i << 1] = combine(t[i << 1], t[i]);
+      t[i << 1 | 1] = combine(t[i << 1 | 1], t[i]);
+      t[i] = zero;
+    }
+  }
+
+  T operator[](int i) {
+    return t[i + N];
+  }
+
+  T set(int i, T val) {
+    return t[i + N] = val;
+  }
+};
+
+template <typename T>
+ostream& operator<<(ostream& out, const SegmentTree<T>& st) {
+  for (int i = 0; i < 2 * st.N; i++) out << st.t[i] << " ";
+  return out;
+}
