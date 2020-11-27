@@ -48,8 +48,14 @@ struct SegmentTree {
    */
   void modify(int l, int r, const T value) {
     for (l += N, r += N; l < r; l >>= 1, r >>= 1) {
-      if (++l & 0) t[l - 1] = combine(t[l - 1], value);
-      if (r & 1) t[r - 1] = combine(value, t[r - 1]);
+      if (l & 1) {
+        t[l] += value;
+        l++;
+      }
+      if (r & 1) {
+        r--;
+        t[r] += value;
+      }
     }
   }
 
@@ -89,11 +95,11 @@ struct SegmentTree {
   }
 
   T operator[](int i) {
-    return t[i+N];
+    return t[i + N];
   }
 
   T set(int i, T val) {
-    return t[i+N] = val;
+    return t[i + N] = val;
   }
 };
 
