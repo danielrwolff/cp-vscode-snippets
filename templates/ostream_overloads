@@ -1,5 +1,10 @@
 // Output stream overloads.
-template <template<class, class> class Range, class K, class V>
+template<
+    // Two explicit template parameters are needed for containers like std::map.
+    template<class, class> class Range, class K, class V,
+    // This overload must be disabled for std::string to avoid ambiguity.
+    typename = enable_if_t<!is_same_v<Range<K, V>, string>>
+>
 ostream& operator<<(ostream& out, const Range<K, V>& range) {
     out << '{';
     for (auto it = range.begin(); it != range.end(); ++it) {
