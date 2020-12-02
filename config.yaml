@@ -39,6 +39,11 @@
   Display: Sieve of Eratosthenes
   Description: Find all prime numbers less than or equal to N.
 
+- Name: split_string
+  Prefix: cpp
+  Display: Split String
+  Description: Split a string using a custom delimeter.
+
 - Name: template
   Prefix: cpp
   Display: C++ Template
