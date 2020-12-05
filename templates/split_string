@@ -1,0 +1,14 @@
+// Splits |text| using |sep| as the delimeter string; empty tokens are omitted from the returned vector.
+vector<string> split(const string& text, const string&& sep) {
+    auto prev = text.begin();
+    auto next = text.begin();
+    vector<string> tokens;
+    for (bool first = true; next != text.end(); first = false) {
+        prev = first ? text.begin() : next + sep.size();
+        next = search(prev, text.end(), sep.begin(), sep.end());
+        if (prev != next) {
+            tokens.emplace_back(prev, next);
+        }
+    }
+    return tokens;
+}
