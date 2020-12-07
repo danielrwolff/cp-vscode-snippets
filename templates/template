@@ -20,120 +20,46 @@ template <typename T> using uset = unordered_set<T>;
 template <typename K, typename V> using umap = unordered_map<K, V>;
 
 // Output stream overloads.
-template <typename T>
-ostream& operator<<(ostream& out, const vector<T>& v) {
-  if (v.size() == 0) {
-      return out << "[]";
+template<
+  // Output stream overload for STL containers with one explicit type parameter.
+  template<class> class Range, class T,
+  typename = enable_if_t<is_same_v<Range<T>, deque<T>> ||
+                         is_same_v<Range<T>, forward_list<T>> ||
+                         is_same_v<Range<T>, list<T>> ||
+                         is_same_v<Range<T>, multiset<T>> ||
+                         is_same_v<Range<T>, set<T>> ||
+                         is_same_v<Range<T>, unordered_multiset<T>> ||
+                         is_same_v<Range<T>, unordered_set<T>> ||
+                         is_same_v<Range<T>, vector<T>>>
+>
+ostream& operator<<(ostream& out, const Range<T>& range) {
+  constexpr auto brackets = is_same_v<Range<T>, vector<T>> ? "[]" : "{}";
+  out << brackets[0];
+  for (auto it = range.begin(); it != range.end(); ++it) {
+    out << *it << (next(it) != range.end() ? ", " : "");
   }
-
-  out << '[' << v[0];
-  for (int i = 1; i < v.size(); ++i) {
-      out << ' ' << v[i];
-  }
-  return out << ']';
+  return out << brackets[1];
 }
 
-template <typename T>
-ostream& operator<<(ostream& out, const vector<vector<T>>& m) {
-  if (m.size() == 0) {
-    return out << "[]";
-  }
-
-  for (const auto& row : m) {
-    out << row << endl;
-  }
-  return out;
-}
-
-template <typename T>
-ostream& operator<<(ostream& out, const deque<T>& d) {
-  if (d.size() == 0) {
-    return out << "[]";
-  }
-
-  out << '[' << d[0];
-  for (int i = 1; i < d.size(); ++i) {
-    out << ' ' << d[i];
-  }
-  return out << ']';
-}
-
-template <typename T>
-ostream& operator<<(ostream& out, const set<T>& s) {
-  if (s.size() == 0) {
-    return out << "{}";
-  }
-
-  out << '{' << *s.begin();
-  for (auto it = ++s.begin(); it != s.end(); ++it) {
-    out << ' ' << *it;
+template<
+  // Output stream overload for STL containers with two explicit type parameters.
+  template<class, class> class Range, class K, class V,
+  typename = enable_if_t<is_same_v<Range<K, V>, map<K, V>> ||
+                         is_same_v<Range<K, V>, multimap<K, V>> ||
+                         is_same_v<Range<K, V>, unordered_map<K, V>> ||
+                         is_same_v<Range<K, V>, unordered_multimap<K, V>>>
+>
+ostream& operator<<(ostream& out, const Range<K, V>& range) {
+  out << '{';
+  for (auto it = range.begin(); it != range.end(); ++it) {
+      out << it->first << ": " << it->second << (next(it) != range.end() ? ", " : "");
   }
   return out << '}';
 }
 
-template <typename T>
-ostream& operator<<(ostream& out, const multiset<T>& s) {
-  return out << vector<T>(s.begin(), s.end());
-}
-
-template <typename T>
-ostream& operator<<(ostream& out, const unordered_set<T>& s) {
-  if (s.size() == 0) {
-    return out << "{}";
-  }
-
-  vector<T> v(s.begin(), s.end());
-  sort(v.begin(), v.end());
-
-  out << '{' << v[0];
-  for (int i = 1; i < v.size(); ++i) {
-    out << ' ' << v[i];
-  }
-  return out << '}';
-}
-
-template <typename K, typename V>
-ostream& operator<<(ostream& out, const map<K, V>& m) {
-  if (m.size() == 0) {
-    return out << "{}";
-  }
-
-  vector<K> keys;
-  for (const auto& p : m) {
-    keys.push_back(p.first);
-  }
-
-  out << "{" << keys[0] << ": " << m.at(keys[0]);
-  for (int i = 1; i < keys.size(); ++i) {
-    const auto& key = keys[i];
-    out << ", " << key << ": " << m.at(key);
-  }
-  return out << '}';
-}
-
-template <typename K, typename V>
-ostream& operator<<(ostream& out, const unordered_map<K, V>& m) {
-  if (m.size() == 0) {
-    return out << "{}";
-  }
-
-  vector<K> keys;
-  for (const auto& p : m) {
-    keys.push_back(p.first);
-  }
-  sort(keys.begin(), keys.end());
-
-  out << "{" << keys[0] << ": " << m.at(keys[0]);
-  for (int i = 1; i < keys.size(); ++i) {
-    const auto& key = keys[i];
-    out << ", " << key << ": " << m.at(key);
-  }
-  return out << '}';
-}
-
-template <typename F, typename S>
-ostream& operator<<(ostream& out, const pair<F, S>& p) {
-  return out << '(' << p.first << ", " << p.second << ')';
+template <class F, class S>
+ostream& operator<<(ostream& out, const pair<F, S>& duo) {
+  return out << '(' << duo.first << ", " << duo.second << ')';
 }
 
 namespace std {
