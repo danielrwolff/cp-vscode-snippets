@@ -1,19 +1,41 @@
-// Output stream overloads.
 template<
-    // Two explicit template parameters are needed for containers like std::map.
-    template<class, class> class Range, class K, class V,
-    // This overload must be disabled for std::string to avoid ambiguity.
-    typename = enable_if_t<!is_same_v<Range<K, V>, string>>
+  // Output stream overload for STL containers with one explicit type parameter.
+  template<class> class Range, class T,
+  typename = enable_if_t<is_same_v<Range<T>, deque<T>> ||
+                         is_same_v<Range<T>, forward_list<T>> ||
+                         is_same_v<Range<T>, list<T>> ||
+                         is_same_v<Range<T>, multiset<T>> ||
+                         is_same_v<Range<T>, set<T>> ||
+                         is_same_v<Range<T>, unordered_multiset<T>> ||
+                         is_same_v<Range<T>, unordered_set<T>> ||
+                         is_same_v<Range<T>, vector<T>>>
+>
+ostream& operator<<(ostream& out, const Range<T>& range) {
+  constexpr auto brackets = is_same_v<Range<T>, vector<T>> ? "[]" : "{}";
+  out << brackets[0];
+  for (auto it = range.begin(); it != range.end(); ++it) {
+    out << *it << (next(it) != range.end() ? ", " : "");
+  }
+  return out << brackets[1];
+}
+
+template<
+  // Output stream overload for STL containers with two explicit type parameters.
+  template<class, class> class Range, class K, class V,
+  typename = enable_if_t<is_same_v<Range<K, V>, map<K, V>> ||
+                         is_same_v<Range<K, V>, multimap<K, V>> ||
+                         is_same_v<Range<K, V>, unordered_map<K, V>> ||
+                         is_same_v<Range<K, V>, unordered_multimap<K, V>>>
 >
 ostream& operator<<(ostream& out, const Range<K, V>& range) {
-    out << '{';
-    for (auto it = range.begin(); it != range.end(); ++it) {
-        out << *it << (next(it) != range.end() ? ", " : "");
-    }
-    return out << '}';
+  out << '{';
+  for (auto it = range.begin(); it != range.end(); ++it) {
+      out << it->first << ": " << it->second << (next(it) != range.end() ? ", " : "");
+  }
+  return out << '}';
 }
 
 template <class F, class S>
-ostream& operator<<(ostream& out, const pair<F, S>& pair) {
-    return out << '(' << pair.first << ", " << pair.second << ')';
+ostream& operator<<(ostream& out, const pair<F, S>& duo) {
+  return out << '(' << duo.first << ", " << duo.second << ')';
 }
