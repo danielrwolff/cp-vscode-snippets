@@ -5,6 +5,7 @@ vector<int> facts, inv_facts, rev;
 
 inline void compute_combs(int _n) {
   if (computed_combs >= _n) return;
+  _n = max(_n, (int)2);
   facts.resize(_n);
   inv_facts.resize(_n);
   rev.resize(_n);
