@@ -24,6 +24,11 @@
   Description: Returns the modular inverse of a given value using the extended euclidean algorithm.
   Dependencies: [ext_euclid]
 
+- Name: lis
+  Prefix: cpp
+  Display: Longest Increasing Subsequence
+  Description: Given an array of numbers, will return an array containing one of the longest strictly increasing subsequences.
+
 - Name: ostream_overloads
   Prefix: cpp
   Display: Output Stream Overloads
