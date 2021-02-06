@@ -86,11 +86,6 @@ int main() {
 // Definitions
 #define int long long
 #define INF 0x3f3f3f3f
-#define len(a) (int)((a).size())
-#define F first
-#define S second
-#define pf emplace_front
-#define pb emplace_back
 
 // Solution
 //______________________________________________________________________________
