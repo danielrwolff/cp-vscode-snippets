@@ -1,0 +1,23 @@
+vector<int> lis(vector<int>& seq) {
+  int _N = seq.size();
+  vector<int> dp(_N+1, INF), ind(_N+1, -INF), p(_N, -INF);
+  dp[0] = -INF;
+  
+  for (int n = 0; n < _N; n++) {
+    int j = upper_bound(dp.begin(), dp.end(), seq[n]) - dp.begin();
+    if (dp[j-1] < seq[n] && seq[n] < dp[j]) {
+      dp[j] = seq[n];
+      ind[j] = n;
+      p[n] = ind[j-1];
+    }
+  }
+  
+  int longest = lower_bound(dp.begin(), dp.end(), INF) - dp.begin() - 1;
+
+  vector<int> res;
+  for (int pos = ind[longest]; pos >= 0; pos = p[pos]) 
+    res.emplace_back(seq[pos]);
+  
+  reverse(res.begin(), res.end());
+  return res;
+}

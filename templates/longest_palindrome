@@ -1,0 +1,17 @@
+template <typename T>
+vector<T> longest_palindrome(vector<T> seq) {
+  vector<int> oddP = manachers(seq, false),
+              evenP = manachers(seq, true);
+
+  int oddInd = max_element(oddP.begin(), oddP.end()) - oddP.begin();
+  int evenInd = max_element(evenP.begin(), evenP.end()) - evenP.begin();
+  
+  bool useOdd = oddP[oddInd] * 2 - 1 > evenP[evenInd] * 2;
+  vector<int> p = useOdd ? oddP : evenP;
+  int ind = useOdd ? oddInd : evenInd;
+
+  vector<T> res;
+  for (int i = ind - p[ind] + useOdd; i < ind + p[ind]; i++)
+    res.emplace_back(seq[i]);
+  return res;
+}

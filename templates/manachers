@@ -1,0 +1,20 @@
+template <typename T>
+vector<int> manachers(vector<T> seq, bool even = false) {
+  int _N = seq.size();
+  int l = 0, r = -1;
+  vector<int> p(_N);
+  for (int i = 0; i < _N; i++) {
+    int k = !even;
+    if (i <= r) k = min(p[l + r - i + even], r - i + 1);
+    
+    while (0 <= i - k - even && i + k < _N && seq[i-k - even] == seq[i+k]) 
+      k++;
+
+    p[i] = k--;
+    if (i + k > r) {
+      l = i - k - even;
+      r = i + k;
+    }
+  }
+  return p;
+}

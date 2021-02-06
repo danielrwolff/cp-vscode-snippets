@@ -24,6 +24,28 @@
   Description: Returns the modular inverse of a given value using the extended euclidean algorithm.
   Dependencies: [ext_euclid]
 
+- Name: lis
+  Prefix: cpp
+  Display: Longest Increasing Subsequence
+  Description: Given an array of numbers, will return an array containing one of the longest strictly increasing subsequences.
+
+- Name: longest_palindrome
+  Prefix: cpp
+  Display: Longest Palindromic Substring
+  Description: Given an array of items, will return the longest contiguous palindromic sequence.
+  Dependencies: [manachers]
+
+- Name: manachers
+  Prefix: cpp
+  Display: Manachers Algorithm (helper)
+  Description: Calculates the auxillary array for manachers algorithm. Used by other algorithms.
+
+- Name: num_palindromes
+  Prefix: cpp
+  Display: Number of Palindromes
+  Description: Given an array of items, will return the number of contiguous palindromic sequences.
+  Dependencies: [manachers]
+
 - Name: ostream_overloads
   Prefix: cpp
   Display: Output Stream Overloads

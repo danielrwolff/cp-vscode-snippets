@@ -1,0 +1,10 @@
+template <typename T>
+int num_palindromes(vector<T>& seq) {
+  vector<int> oddP = manachers(seq, false),
+              evenP = manachers(seq, true);
+
+  int res = 0;
+  for (int p : oddP) res += p;
+  for (int p : evenP) res += p;
+  return res;
+}
